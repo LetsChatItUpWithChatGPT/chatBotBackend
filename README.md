@@ -4,4 +4,4 @@
 
 ## Description:
 
-- We were tasked with generating a slackbot connected to OpenAI for students to utilize.  The initial goal is to allow students the ability to prompt the slack bot with lab instructions to receieve feedback or help. We hope to expand the bots capabilities or even implementing additional bots that provide different functionalities after we hit MVP on the initial request.
+- We were tasked with generating a slackbot connected to OpenAI for students to utilize.  The initial goal is to allow students the ability to prompt the slack bot with lab instructions to receieve feedback or help. We hope to expand the bots capabilities or even implement additional bots that provide different functionalities after we hit MVP on the initial request.
