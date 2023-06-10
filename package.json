@@ -1,0 +1,18 @@
+{
+  "name": "chatbotbackend",
+  "version": "1.0.0",
+  "description": "## Authors: Donna Ada, Kao Saelor, Kenya Womack, Hayden Cooper, Tricia Sawyer, Reece Renninger",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/bolt": "^3.13.1",
+    "dotenv": "^16.1.4",
+    "eslint": "^8.42.0",
+    "nodemon": "^2.0.22"
+  }
+}
