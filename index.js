@@ -12,10 +12,10 @@ const app = new App({
 });
 
 
-app.command('/knowledge', async ({ command, ack, say }) => {
+app.command('/hello', async ({ command, ack, say }) => {
   try {
     await ack();
-    say('Yaaay! that command works!');
+    say('I am alive!!!');
   } catch (error) {
     console.log('err');
     console.error(error);
