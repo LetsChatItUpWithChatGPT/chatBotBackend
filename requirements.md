@@ -31,35 +31,16 @@ Our MVP will be a working chat bot within a Slack workspace that allows for user
 
 **Stretch**
 
-What are your stretch goals?
-
-What stretch goals are you going to aim for?
-Functional Requirements
-
-List the functionality of your product. This will consist of tasks such as the following:
-
-    An admin can create and delete user accounts
-    A user can update their profile information
-    A user can search all of the products in the inventory
+Our main stretch goal would be to implement a database that houses all the labs and allow for students to use some type of /help command use a keyword reference to grab the information to that specific lab.  
+If possible to get that portion running, we want to explore utilizing the canvas api to possibly dynamically grab the lab information if possible instead of having to call a DB that would need to be updated as labs change.  
 
 ## Data Flow
 
-Describe the flow of data in your application. Write out what happens from the time the user begins using the app to the time the user is done with the app. Think about the “Happy Path” of the application. Describe through visuals and text what requests are made, and what data is processed, in addition to any other details about how the user moves through the site.
-Non-Functional Requirements (301 & 401 only)
+Since our project is a slack bot sending requests to Open AI API, ideally the flow of data would be the student going into their workspace of Slack where the bot lives.  Upon issuing a command such as /help and following that lab information, it would ping the API to take in that information and come back with response of a todo list of sorts or guidance on the lab based on the student input.  The student could then continue to ask questions with the lab reference in place for more clarification on portions needed.
+The domain model image can be referenced in the [README.md](./README.md).
 
 ## Non-Functional Requirements (301 & 401 only)
 
-Non-functional requirements are requirements that are not directly related to the functionality of the application but still important to the app.
+Our chat bot will be set up for testability by the ability for it to conduct its API ping and bring back valid information regarding the lab instructions it was prompted.  This will occur synchronously as we develop the bot.  We will be testing the bot at each stage of completion to ensure it is able to complete the requested with a valid response.
 
-Examples include:
-
-    Security
-    Usability
-    Testability
-    etc….
-
-Pick 2 non-functional requirements and describe their functionality in your application.
-
-If you are stuck on what non-functional requirements are, do a quick online search and do some research. Write a minimum of 3-5 sentences to describe how the non-functional requirements fits into your app.
-
-You MUST describe what the non-functional requirement is and how it will be implemented. Simply saying “Our project will be testable for testibility” is NOT acceptable. Tell us how, why, and what.
+Performance will be another measure we will be attempting to record.  Since we are trying to possibly build a DB to pull lab information from to then send over to our Open AI API we will need to take into account speed if using a free service.  We may pay for a limited time to have an enhanced API for making calls faster if we see that there is considerable downtime being request and response.  We will also want to test on performance based on the file size of what we are sending for response. Ideally we would like to aim for the API response to be under 5 seconds since Chat GPT itself can sometimes take a few seconds to generate a response even when typing directly into their chat web page.
