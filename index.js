@@ -2,15 +2,15 @@
 
 const { App } = require('@slack/bolt');
 require('dotenv').config();
+const axios = require('axios');
 // require the fs module that's built into Node.js
 const fs = require('fs');
 // get the raw data from the testDB.json file
 let raw = fs.readFileSync('./testDB.json'); 
+let rawLabDB = fs.readFileSync('./labDB.json');
 // parse the raw bytes from the file as JSON
 let faqs = JSON.parse(raw);
-//tracking information from live requests
-// import LogRocket from 'logrocket'; // added type: module to json to try to get this working
-// LogRocket.init('bh9qol/slackbotchatgpt');
+let labDB = JSON.parse(rawLabDB);
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -19,6 +19,13 @@ const app = new App({
   socketMode: true, // enable the following to use socket mode
   appToken: process.env.APP_TOKEN,
 });
+
+// OpenAI API configuration
+const openAIEndpoint = 'https://api.openai.com/v1/engines/davinci-codex/completions';
+const openAIHeaders = {
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
+};
 
 //!! PROOF OF LIFE MESSAGE
 app.command('/hello', async ({ command, ack, say }) => {
@@ -158,6 +165,34 @@ app.message(/hey/, async ({ command, say }) => { //regex to allow any type of st
     console.error(error);
   }
 });
+
+//help ai command test
+app.command('/helpai', async ({ command, ack, say }) => {
+  try {
+    await ack();
+    const response = await openAIChatCompletion(command.text);
+    say(response);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+// Function to process the OpenAI chat completion
+async function openAIChatCompletion(message) {
+  try {
+    const response = await axios.post(openAIEndpoint, {
+      prompt: message.text,
+      max_tokens: 50,
+      temperature: 0.7,
+      n: 1,
+    }, { headers: openAIHeaders });
+
+    return response.data.choices[0].text.trim();
+  } catch (error) {
+    console.error('Error processing request with OpenAI:', error);
+    return 'Oops! Something went wrong.';
+  }
+}
 
 
 //start up our bot
