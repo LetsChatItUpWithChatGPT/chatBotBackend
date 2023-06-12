@@ -71,3 +71,10 @@ Acceptance Task
     Provide error message if slash command fails to connect to OpenAI
     Ensure that slash commands are only enabled in specific chats (direct message vs channels)
 
+### References
+
+- [Slack API](https://api.slack.com/)
+- [Open AI API](https://openai.com/product#made-for-developers)
+- [Building a slack bot tutorial](https://blog.logrocket.com/build-a-slackbot-in-node-js-with-slacks-bolt-api/)
+- [Slack bot for generating blogs](https://youtu.be/an_LouGafXc)
+- Brook for coming up with the idea of a slack bot connected to Open AI to help students with lab work!
