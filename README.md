@@ -8,6 +8,8 @@
 
 ## Domain Modeling:
 
+This will be modified as needed through the progression of the project.
+![Domain Model of our slackbot project](assets/midTermProjectUML.png)
 
 ## User Stories:
 
