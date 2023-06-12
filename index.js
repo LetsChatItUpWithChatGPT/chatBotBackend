@@ -3,7 +3,7 @@
 const { App } = require('@slack/bolt');
 require('dotenv').config();
 //tracking information from live requests
-import LogRocket from 'logrocket';
+import LogRocket from 'logrocket'; // added type: module to json to try to get this working
 LogRocket.init('bh9qol/slackbotchatgpt');
 // require the fs module that's built into Node.js
 const fs = require('fs');

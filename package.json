@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "## Authors: Donna Ada, Kao Saelor, Kenya Womack, Hayden Cooper, Tricia Sawyer, Reece Renninger",
   "main": "index.js",
+  "type": "module", 
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
