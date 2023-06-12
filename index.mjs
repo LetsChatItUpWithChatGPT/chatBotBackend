@@ -1,6 +1,6 @@
 'use strict';
 
-import { App } from '@slack/bolt'; // getting reference error on render when using require
+const { App } = require('@slack/bolt');
 require('dotenv').config();
 const fs = require('fs');
 // get the raw data from the testDB.json file
