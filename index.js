@@ -131,6 +131,7 @@ app.command('/update', async ({ command, ack, say }) => {
       question: data[1].trim(),
       answer: data[2].trim(),
     };
+    
     // save data to db.json
     fs.readFile('testDB.json', function (err, data) {
       const json = JSON.parse(data);
