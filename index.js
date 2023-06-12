@@ -35,7 +35,7 @@ app.command('/hello', async ({ command, ack, say }) => {
 app.command('/faqs', async ({ command, ack, say }) => {
   try {
     await ack();
-    let message = { blocks: [] };
+    let message = { blocks: [' '] };// added strings to blocks to prevent error when sending commands in regards to needing a string at high level
     faqs.data.map((faq) => {
       message.blocks.push(
         {
@@ -78,7 +78,7 @@ app.command('/faqs', async ({ command, ack, say }) => {
 //grabs only two items from DB with keyword purpose
 app.message(/purpose/, async ({ command, say }) => {
   try {
-    let message = { blocks: [] };
+    let message = { blocks: [' '] };// added strings to blocks to prevent error when sending commands in regards to needing a string at high level
     const purposeFAQs = faqs.data.filter((faq) => faq.keyword === 'purpose');
 
     purposeFAQs.map((faq) => {
@@ -150,7 +150,7 @@ app.command('/update', async ({ command, ack, say }) => {
 // testing simple message response
 app.message(/hey/, async ({ command, say }) => { //regex to allow any type of string of hey work
   try {
-    say('I received your hey, hey back.');
+    say('I noticed your hey, hey back.');
   } catch (error) {
     console.log('err');
     console.error(error);
