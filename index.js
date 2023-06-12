@@ -4,7 +4,7 @@ const { App } = require('@slack/bolt');
 require('dotenv').config();
 const fs = require('fs');
 // get the raw data from the testDB.json file
-let raw = fs.readFileSync('testDB.json');
+let raw = fs.readFileSync('./testDB.json'); 
 // parse the raw bytes from the file as JSON
 let faqs = JSON.parse(raw);
 //tracking information from live requests
@@ -157,6 +157,8 @@ app.message(/hey/, async ({ command, say }) => { //regex to allow any type of st
   }
 });
 
+
+//start up our bot
 (async () => {
   const port = process.env.PORT || 3002;
   // Start your app
