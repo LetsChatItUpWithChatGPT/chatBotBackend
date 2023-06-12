@@ -2,15 +2,15 @@
 
 const { App } = require('@slack/bolt');
 require('dotenv').config();
-//tracking information from live requests
-import LogRocket from 'logrocket'; // added type: module to json to try to get this working
-LogRocket.init('bh9qol/slackbotchatgpt');
-// require the fs module that's built into Node.js
 const fs = require('fs');
 // get the raw data from the testDB.json file
 let raw = fs.readFileSync('testDB.json');
 // parse the raw bytes from the file as JSON
 let faqs = JSON.parse(raw);
+//tracking information from live requests
+// import LogRocket from 'logrocket'; // added type: module to json to try to get this working
+// LogRocket.init('bh9qol/slackbotchatgpt');
+// require the fs module that's built into Node.js
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
