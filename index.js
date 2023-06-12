@@ -8,9 +8,7 @@ const fs = require('fs');
 let raw = fs.readFileSync('./testDB.json'); 
 // parse the raw bytes from the file as JSON
 let faqs = JSON.parse(raw);
-//tracking information from live requests
-// import LogRocket from 'logrocket'; // added type: module to json to try to get this working
-// LogRocket.init('bh9qol/slackbotchatgpt');
+
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -19,6 +17,12 @@ const app = new App({
   socketMode: true, // enable the following to use socket mode
   appToken: process.env.APP_TOKEN,
 });
+
+// const openAIEndpoint = 'https://api.openai.com/v1/engines/davinci-codex/completions';
+// const openAIHeaders = {
+//   'Content-Type': 'application/json',
+//   'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` // Replace with your OpenAI API key
+// };
 
 //!! PROOF OF LIFE MESSAGE
 app.command('/hello', async ({ command, ack, say }) => {
