@@ -6,6 +6,7 @@ const faqModule = (app, faqs) => {
   let raw = fs.readFileSync('./faqsDB.json');
   // parse the raw bytes from the file as JSON
   faqs = JSON.parse(raw);
+
   // users can access a faqs message from db we set up
   app.command('/faqs', async ({ command, ack, say }) => {
     try {
