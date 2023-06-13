@@ -6,11 +6,13 @@ const axios = require('axios');
 // require the fs module that's built into Node.js
 const fs = require('fs');
 // get the raw data from the testDB.json file
-let raw = fs.readFileSync('./testDB.json'); 
+let raw = fs.readFileSync('./testDB.json');
 let rawLabDB = fs.readFileSync('./labDB.json');
 // parse the raw bytes from the file as JSON
 let faqs = JSON.parse(raw);
 let labDB = JSON.parse(rawLabDB);
+
+let { Configuration, OpenAIApi } = require('openai');
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -20,12 +22,6 @@ const app = new App({
   appToken: process.env.APP_TOKEN,
 });
 
-// OpenAI API configuration
-const openAIEndpoint = 'https://api.openai.com/v1/engines/davinci-codex/completions';
-const openAIHeaders = {
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`, // Replace with your OpenAI API key
-};
 
 //!! PROOF OF LIFE MESSAGE
 app.command('/hello', async ({ command, ack, say }) => {
@@ -166,33 +162,107 @@ app.message(/hey/, async ({ command, say }) => { //regex to allow any type of st
   }
 });
 
-//help ai command test
-app.command('/helpai', async ({ command, ack, say }) => {
-  try {
-    await ack();
-    const response = await openAIChatCompletion(command.text);
-    say(response);
-  } catch (error) {
-    console.error(error);
+// let conversationHistory = [
+//   { role: 'system', content: 'You are a helpful assistant.' },
+//   { role: 'assistant', content: 'Hello! Please provide your lab\'s problem domain?' },
+//   { role: 'user', content: `Please provide steps to solve this problem domain: ${event.text}` },
+// ];
+
+// let conversationHistory = [
+//   { role: 'system', content: 'You are a helpful assistant.' },
+//   { role: 'assistant', content: 'Hello! Please provide your lab\'s problem domain?' },
+//   { role: 'user', content: 'Provide answers without code unless otherwise asked' },
+// ];
+
+
+const userConversations = new Map();
+
+app.event('message', async ({ event, ack, say }) => {
+  const channelId = event.channel;
+
+  /**
+   * The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. However note that the system message is optional and the models behavior without a system message is likely to be similar to using a generic message such as "You are a helpful assistant."
+   */
+
+  let conversationHistory = userConversations.get(channelId) || [{ role: 'system', content: 'Provide response to questions without code unless requested by user.' }];
+
+  if (event.channel_type === 'im') {
+    //U05C08USES0 ChatGPT 
+    console.log(event.text);
+    console.log('event>>>>>', event);
+
+
+    const configuration = new Configuration({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    const openAI = new OpenAIApi(configuration);
+
+    conversationHistory.push({ role: 'user', content: event.text });
+
+    // Modify user message to then allow the ai to respond with just the steps and not the code
+    const userMessage = event.text;
+    const modifiedUserMessage = `Steps to solve this problem domain: ${userMessage}`;
+    conversationHistory.push({ role: 'user', content: modifiedUserMessage });
+
+    say({
+      text: ':robot_face: AI is formulating a response...',
+    });
+
+
+    const response = await openAI.createChatCompletion({
+      model: 'gpt-3.5-turbo', // text-davinci-003
+      temperature: 0.8,
+      messages: conversationHistory,
+      // stream: true,
+      // max_tokens: 150,
+      // stop: ['###', 'user', 'assistant'],
+    });
+
+
+    console.log('conversationHistory>>>>>', conversationHistory);
+
+    const aiResponse = response.data.choices[0].message.content;
+
+    conversationHistory.push({ role: 'assistant', content: aiResponse });
+
+    userConversations.set(channelId, conversationHistory);
+
+    console.log(response.data.choices);
+    say({
+      text: aiResponse,
+    });
+
+    
+    if (conversationHistory.length > 0){
+      // Check if the user's message is a follow-up question...
+      const isFollowUpQuestion = userMessage.includes('Further explanation');
+      if (isFollowUpQuestion) {
+        const followUpQuestion = userMessage.substring(userMessage.indexOf(':') + 1).trim();
+        conversationHistory.push({ role: 'user', content: followUpQuestion });
+
+        // Repeat the AI response generation with the follow-up question included
+        const followUpResponse = await openAI.createChatCompletion({
+          model: 'gpt-3.5-turbo',
+          temperature: 0.8,
+          messages: conversationHistory,
+        });
+
+        const aiFollowUpResponse = followUpResponse.data.choices[0].message.content;
+        conversationHistory.push({ role: 'assistant', content: aiFollowUpResponse });
+
+        // Repeat
+        userConversations.set(channelId, conversationHistory);
+
+        console.log(followUpResponse.data.choices);
+        say({
+          text: aiFollowUpResponse,
+        });
+      }
+    }
+
+
   }
 });
-
-// Function to process the OpenAI chat completion
-async function openAIChatCompletion(message) {
-  try {
-    const response = await axios.post(openAIEndpoint, {
-      prompt: message.text,
-      max_tokens: 50,
-      temperature: 0.7,
-      n: 1,
-    }, { headers: openAIHeaders });
-
-    return response.data.choices[0].text.trim();
-  } catch (error) {
-    console.error('Error processing request with OpenAI:', error);
-    return 'Oops! Something went wrong.';
-  }
-}
 
 
 //start up our bot
@@ -202,4 +272,3 @@ async function openAIChatCompletion(message) {
   await app.start(process.env.PORT || port);
   console.log(`⚡️ Slack Bolt app is running on port ${port}!`);
 })();
-
