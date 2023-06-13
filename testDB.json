@@ -16,11 +16,6 @@
       "answer": "There are currently 6 members on the team."
     },
     {
-      "keyword": "reset password",
-      "question": "How do I reset my password?",
-      "answer": "I don't know how to do this, I am a chat bot, save your password better."
-    },
-    {
       "keyword": "test",
       "question": "is this actually updating our DB ?",
       "answer": "Only one way to find out"
