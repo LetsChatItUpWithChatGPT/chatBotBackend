@@ -9,7 +9,7 @@ const chatModule = (app) => {
     // userConversations = new Map(); // moved inside function for exporting?
     const channelId = event.channel;
 
-    let conversationHistory = userConversations.get(channelId) || [{ role: 'system', content: 'Provide response to questions without code unless requested by user.' }];
+    let conversationHistory = userConversations.get(channelId) || [{ role: 'system', content: 'Provide basic response to questions without code unless requested by user.' }];
 
     if (event.channel_type === 'im') {
       console.log(event.text);
