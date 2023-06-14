@@ -1,7 +1,11 @@
 'use strict';
 
-const axios = require('axios');
+
+// STRETCH GOAL: this is canvas content that was added to the code from chatModule for now
+
+const { Configuration, OpenAIApi } = require('openai');
 const { WebClient } = require('@slack/web-api');
+const axios = require('axios');
 
 const canvasToken = 'CANVAS_API_TOKEN';
 const slackToken = 'SLACK_BOT_TOKEN';
@@ -14,34 +18,68 @@ const courseId = '6745251';
 
 const slackClient = new WebClient(slackToken);
 
+const userConversations = new Map();
 
-// Handle Slack events (copied just for this code)
-async function handleEvent(event) {
-  if (event.type === 'message' && event.text) {
-    const message = event.text;
-    
-    // Check if the message contains a request for assignment information
-    if (message.includes('assignment') || message.includes('homework')) {
-      const assignments = await getAssignments();
-      
-      // Send the assignment information back to Slack
-      const formattedAssignments = formatAssignments(assignments);
-      sendSlackMessage(event.channel, formattedAssignments);
+const chatModule = (app) => {
+  app.event('message', async ({ event, ack, say }) => {
+    const channelId = event.channel;
+    let conversationHistory = userConversations.get(channelId) || [
+      { role: 'system', content: 'Provide basic response to questions without code unless requested by user.' },
+    ];
+
+    if (event.channel_type === 'im') {
+      const configuration = new Configuration({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+      const openAI = new OpenAIApi(configuration);
+
+      conversationHistory.push({ role: 'user', content: event.text });
+
+      // Check if the message contains a request for assignment information
+      if (event.text.includes('assignment') || event.text.includes('homework')) {
+        const assignments = await getAssignments();
+        const formattedAssignments = formatAssignments(assignments);
+        conversationHistory.push({ role: 'assistant', content: formattedAssignments });
+        await sendSlackMessage(channelId, formattedAssignments);
+      } else {
+        // Modify user message to then allow the AI to respond with just the steps and not the code
+        const userMessage = event.text;
+        const modifiedUserMessage = `Steps to solve this problem domain: ${userMessage}`;
+        conversationHistory.push({ role: 'user', content: modifiedUserMessage });
+      }
+
+      say({
+        text: ':robot_face: AI is formulating a response...',
+      });
+
+      const response = await openAI.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        temperature: 0.8,
+        messages: conversationHistory,
+      });
+
+      const aiResponse = response.data.choices[0].message.content;
+
+      conversationHistory.push({ role: 'assistant', content: aiResponse });
+      userConversations.set(channelId, conversationHistory);
+
+      say({
+        text: aiResponse,
+      });
     }
-  }
-}
+  });
+};
 
 
 // Fetch assignments from Canvas API
 async function getAssignments() {
   try {
-    const response = await axios.get(`${canvasApiUrl}/${courseId}/assignments`,
-      {
-        headers: {
-          'Authorization': `Bearer ${canvasToken}`,
-        },
-      });
-    
+    const response = await axios.get(`${canvasApiUrl}/${courseId}/assignments`, {
+      headers: {
+        'Authorization': `Bearer ${canvasToken}`,
+      },
+    });
+
     return response.data;
   } catch (err) {
     console.error('Error fetching assignments:', err);
@@ -49,16 +87,12 @@ async function getAssignments() {
   }
 }
 
-// Format assignments for Slack
+// Format assignments for the response
 function formatAssignments(assignments) {
-  // Extracted assignment details, title and due date. Can add more and format them into a message string
-  
   let formattedMessage = 'Here are the upcoming assignments:\n';
-  
   for (const assignment of assignments) {
     formattedMessage += `- ${assignment.name} (Due: ${assignment.due_at})\n`;
   }
-  
   return formattedMessage;
 }
 
@@ -66,7 +100,7 @@ function formatAssignments(assignments) {
 async function sendSlackMessage(channelId, message) {
   try {
     await slackClient.chat.postMessage({
-      channelId: channelId,
+      channel: channelId,
       text: message,
     });
   } catch (err) {
@@ -75,7 +109,4 @@ async function sendSlackMessage(channelId, message) {
   }
 }
 
-// // Listen for Slack events
-// function startListening() {
-//   // Start listening for Slack events using the Slack Events API or your preferred approach
-// }
+module.exports = chatModule;
