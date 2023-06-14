@@ -45,7 +45,7 @@ const chatModule = (app) => {
       userConversations.set(channelId, conversationHistory);
 
       console.log(response.data.choices);
-      say({
+      await say({ //added await to try and prevent multi response from 1 question
         text: aiResponse,
       });
 
