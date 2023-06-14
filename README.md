@@ -41,14 +41,14 @@ You can begin the process of deploying!
 11. We attempted to deploy our bot through multiple avenues with Render, Heroku, and Vercel. There are multiple [hosting providers](https://api.slack.com/docs/hosting), but we ultimately ended up using [AWS(Amazon Web Services)](https://aws.amazon.com/).
 12. Ngrok was extremely helpful in testing locally before we went with the serverless route. A complete breakdown of this process can be found [here](https://slack.dev/bolt-js/deployments/aws-lambda).
 13. We recommend following the guide as it helped us tremendously with navigating the deployment, however we have some modifications:
-            
+
     When setting up your serverless.yml if you are using dotenv you need to add ```useDotenv: true``` like below:
-    You can also implement timeouts and memory size if you choose to.  By enabling 
+    You can also implement timeouts and memory size if you choose to.  By enabling
     ![Alt text](assets/example-serverless-yml.png)
 
     After running the serverless deploy command your root files will generate a serverless folder. **YOU MUST ADD THIS TO YOUR .GITIGNORE** it contains your key information for your bot and Open AI which will result in your keys being **REVOKED** if you push them to GitHub
 14. Once you have establish your bot, connected your Open AI API, and deployed to AWS, you are almost done! The final step will be setting up Lambda to auto deploy off pushs to your GitHub Repo.
-15. We followed this guide [How to set up an AWS Lambda and auto deployments with Github Actions](https://blog.jakoblind.no/aws-lambda-github-actions/).
+15. We followed this guide [How to set up an AWS Lambda and auto deployments with Github Actions](https://blog.jakoblind.no/aws-lambda-github-actions/). During this process you may need to modify your serverless.yml to be through secrets as well instead of env processing as referenced in the above image.
 
 ***Congratulations you just completed creating a slack bot connected to Open AI API and deployed it utilizing AWS!***
 
@@ -120,6 +120,77 @@ You can begin the process of deploying!
 - [Open AI API](https://openai.com/product#made-for-developers)
 - [Building a slack bot tutorial](https://blog.logrocket.com/build-a-slackbot-in-node-js-with-slacks-bolt-api/)
 - [Slack bot for generating blogs](https://youtu.be/an_LouGafXc)
+
+  Deployment References:
 - [Deploying slack bot to AWS Lambda](https://slack.dev/bolt-js/deployments/aws-lambda)
 - [How to set up an AWS Lambda and auto deployments with Github Actions](https://blog.jakoblind.no/aws-lambda-github-actions/)
+- [Github Action for Serverless](https://github.com/serverless/github-action)
+
+Example of code setup for your auto deploy yml/main yml
+
+    ```yaml
+
+name: Deploy to Serverless
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: <your region>
+
+    - name: Deploy with Serverless Framework
+      run: npx serverless deploy --stage production
+
+    ```
+
+serverless.yml changes
+
+    ```yaml
+
+    service: <service name>
+ frameworkVersion: '3'
+ provider:
+  name: aws
+  runtime: nodejs18.x
+  timeout: 30
+  memorySize: 512
+  environment:
+    SLACK_SIGNING_SECRET: ${{secrets.SLACK_SIGNING_SECRET}}
+    SLACK_BOT_TOKEN: ${{secrets.SLACK_BOT_TOKEN}}
+    SLACK_APP_TOKEN: ${{secrets.SLACK_APP_TOKEN}}
+    OPENAI_API_KEY: ${{secrets.OPENAI_API_KEY}}
+ functions:
+  slack:
+    handler: app.handler
+    events:
+      - http:
+          path: slack/events
+          method: post
+ plugins:
+
+- serverless-offline
+    ```
+
 - Brook for coming up with the idea of a slack bot connected to Open AI to help students with lab work!
