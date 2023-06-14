@@ -41,9 +41,9 @@ You can begin the process of deploying!
 11. We attempted to deploy our bot through multiple avenues with Render, Heroku, and Vercel. There are multiple [hosting providers](https://api.slack.com/docs/hosting), but we ultimately ended up using [AWS(Amazon Web Services)](https://aws.amazon.com/).
 12. Ngrok was extremely helpful in testing locally before we went with the serverless route. A complete breakdown of this process can be found [here](https://slack.dev/bolt-js/deployments/aws-lambda).
 13. We recommend following the guide as it helped us tremendously with navigating the deployment, however we have some modifications:
-            
+
     When setting up your serverless.yml if you are using dotenv you need to add ```useDotenv: true``` like below:
-    You can also implement timeouts and memory size if you choose to.  By enabling 
+    You can also implement timeouts and memory size if you choose to.  By enabling
     ![Alt text](assets/example-serverless-yml.png)
 
     After running the serverless deploy command your root files will generate a serverless folder. **YOU MUST ADD THIS TO YOUR .GITIGNORE** it contains your key information for your bot and Open AI which will result in your keys being **REVOKED** if you push them to GitHub
@@ -128,7 +128,7 @@ You can begin the process of deploying!
 
 Example of code setup for your auto deploy yml/main yml
 
-```yaml
+    ```yaml
 
 name: Deploy to Serverless
 
@@ -163,17 +163,15 @@ jobs:
     - name: Deploy with Serverless Framework
       run: npx serverless deploy --stage production
 
-
-
-```
+    ```
 
 serverless.yml changes
 
-``` yaml
+    ```yaml
 
     service: <service name>
-frameworkVersion: '3'
-provider:
+ frameworkVersion: '3'
+ provider:
   name: aws
   runtime: nodejs18.x
   timeout: 30
@@ -183,15 +181,16 @@ provider:
     SLACK_BOT_TOKEN: ${{secrets.SLACK_BOT_TOKEN}}
     SLACK_APP_TOKEN: ${{secrets.SLACK_APP_TOKEN}}
     OPENAI_API_KEY: ${{secrets.OPENAI_API_KEY}}
-functions:
+ functions:
   slack:
     handler: app.handler
     events:
       - http:
           path: slack/events
           method: post
-plugins:
-  - serverless-offline
+ plugins:
 
-```
+- serverless-offline
+    ```
+
 - Brook for coming up with the idea of a slack bot connected to Open AI to help students with lab work!

@@ -58,15 +58,6 @@ updateModule(app, faqs);
 //!! chat is working with modularization @ 15:41 on 6/13
 chatModule(app);
 
-
-// //start up our bot
-// (async () => {
-//   const port = 'https://chatgptbotbackend.onrender.com';
-//   // Start your app
-//   await app.start(port);
-//   console.log(`⚡️ Slack Bolt app is running on port ${port}!`);
-// })();
-
 // Handle the Lambda function event
 module.exports.handler = async (event, context, callback) => {
   const handler = await awsLambdaReceiver.start();

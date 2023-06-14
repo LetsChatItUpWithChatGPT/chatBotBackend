@@ -5,8 +5,7 @@ const userConversations = new Map();
 
 const chatModule = (app) => {
   app.event('message', async ({ event, ack, say }) => {
-    
-    // userConversations = new Map(); // moved inside function for exporting?
+  
     const channelId = event.channel;
 
     let conversationHistory = userConversations.get(channelId) || [{ role: 'system', content: 'Provide basic response to questions without code unless requested by user.' }];
@@ -14,7 +13,6 @@ const chatModule = (app) => {
     if (event.channel_type === 'im') {
       console.log(event.text);
       console.log('event>>>>>', event);
-
 
       const configuration = new Configuration({
         apiKey: process.env.OPENAI_API_KEY,
@@ -32,16 +30,11 @@ const chatModule = (app) => {
         text: ':robot_face: AI is formulating a response...',
       });
 
-
       const response = await openAI.createChatCompletion({
-        model: 'gpt-3.5-turbo', // text-davinci-003
+        model: 'gpt-3.5-turbo', 
         temperature: 0.8,
         messages: conversationHistory,
-        // stream: true,
-        // max_tokens: 150,
-        // stop: ['###', 'user', 'assistant'],
       });
-
 
       console.log('conversationHistory>>>>>', conversationHistory);
 
@@ -55,7 +48,6 @@ const chatModule = (app) => {
       say({
         text: aiResponse,
       });
-
 
       if (conversationHistory.length > 0) {
         // Check if the user's message is a follow-up question...
