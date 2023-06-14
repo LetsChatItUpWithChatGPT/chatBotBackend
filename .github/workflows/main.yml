@@ -29,4 +29,4 @@ jobs:
         aws-region: us-east-1
 
     - name: Deploy with Serverless Framework
-      run: npx serverless deploy --stage dev
+      run: npx serverless deploy
