@@ -5,7 +5,7 @@ const userConversations = new Map();
 
 const chatModule = (app) => {
   app.event('message', async ({ event, ack, say }) => {
-  
+
     const channelId = event.channel;
 
     let conversationHistory = userConversations.get(channelId) || [{ role: 'system', content: 'Provide basic response to questions without code unless requested by user.' }];
@@ -45,38 +45,49 @@ const chatModule = (app) => {
       userConversations.set(channelId, conversationHistory);
 
       console.log(response.data.choices);
-      await say({ //added await to try and prevent multi response from 1 question
+
+
+      await say({
         text: aiResponse,
       });
 
-      if (conversationHistory.length > 0) {
-        // Check if the user's message is a follow-up question...
-        const isFollowUpQuestion = userMessage.includes('Further explanation');
-        if (isFollowUpQuestion) {
-          const followUpQuestion = userMessage.substring(userMessage.indexOf(':') + 1).trim();
-          conversationHistory.push({ role: 'user', content: followUpQuestion });
 
-          // Repeat the AI response generation with the follow-up question included
-          const followUpResponse = await openAI.createChatCompletion({
-            model: 'gpt-3.5-turbo',
-            temperature: 0.8,
-            messages: conversationHistory,
-          });
+      // if (conversationHistory.length > 0) {
+      // Check if the user's message is a follow-up question...
+      const isFollowUpQuestion = userMessage.includes('Further explanation');
+      if (isFollowUpQuestion) {
+        const followUpQuestion = userMessage.substring(userMessage.indexOf(':') + 1).trim();
+        conversationHistory.push({ role: 'user', content: followUpQuestion });
 
-          const aiFollowUpResponse = followUpResponse.data.choices[0].message.content;
-          conversationHistory.push({ role: 'assistant', content: aiFollowUpResponse });
 
-          // Repeat
-          userConversations.set(channelId, conversationHistory);
+        // Repeat the AI response generation with the follow-up question included
+        const followUpResponse = await openAI.createChatCompletion({
+          model: 'gpt-3.5-turbo',
+          temperature: 0.8,
+          messages: conversationHistory,
+        });
 
-          console.log(followUpResponse.data.choices);
-          say({
-            text: aiFollowUpResponse,
-          });
-        }
+        const aiFollowUpResponse = followUpResponse.data.choices[0].message.content;
+        conversationHistory.push({ role: 'assistant', content: aiFollowUpResponse });
+
+        // Repeat
+        userConversations.set(channelId, conversationHistory);
+
+        console.log(followUpResponse.data.choices);
+        await say({
+          text: aiFollowUpResponse,
+        });
       }
+      // }
     }
   });
 };
 
 module.exports = chatModule;
+
+/**
+ * test1: added await to say function with text: aiResponse
+ *        added await to say function with text: aiFollowUpResponse
+ *        comment out chat history if check 
+ * 
+ */
