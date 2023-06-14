@@ -13,7 +13,7 @@ This will be modified as needed through the progression of the project.
 
 ## # Environmental Variables
 
-| .env variable*               | SOURCE |  
+| .env variable*               | SOURCE  |  
 | ---------------------------- | -------------- |  
 | PORT                         | User Specified |  
 | SLACK_SIGNING_SECRET         | Slack  <sub><sup>[🔗](https://api.slack.com/authentication/verifying-requests-from-slack)</sup></sub> |
