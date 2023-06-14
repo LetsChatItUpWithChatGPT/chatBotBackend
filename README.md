@@ -46,6 +46,12 @@ You can begin the process of deploying!
     You can also implement timeouts and memory size if you choose to.  By enabling 
     ![Alt text](assets/example-serverless-yml.png)
 
+    After running the serverless deploy command your root files will generate a serverless folder. **YOU MUST ADD THIS TO YOUR .GITIGNORE** it contains your key information for your bot and Open AI which will result in your keys being **REVOKED** if you push them to GitHub
+14. Once you have establish your bot, connected your Open AI API, and deployed to AWS, you are almost done! The final step will be setting up Lambda to auto deploy off pushs to your GitHub Repo.
+15. We followed this guide [How to set up an AWS Lambda and auto deployments with Github Actions](https://blog.jakoblind.no/aws-lambda-github-actions/).
+
+***Congratulations you just completed creating a slack bot connected to Open AI API and deployed it utilizing AWS!***
+
 ## # User Stories
 
 1. As a user, I would like to be able to specify what language should be used for the lab
@@ -115,4 +121,5 @@ You can begin the process of deploying!
 - [Building a slack bot tutorial](https://blog.logrocket.com/build-a-slackbot-in-node-js-with-slacks-bolt-api/)
 - [Slack bot for generating blogs](https://youtu.be/an_LouGafXc)
 - [Deploying slack bot to AWS Lambda](https://slack.dev/bolt-js/deployments/aws-lambda)
+- [How to set up an AWS Lambda and auto deployments with Github Actions](https://blog.jakoblind.no/aws-lambda-github-actions/)
 - Brook for coming up with the idea of a slack bot connected to Open AI to help students with lab work!
