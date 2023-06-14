@@ -92,3 +92,4 @@ _* .env.sample provided in repo. Rename file to `.env` and replace it with your 
 - [Building a slack bot tutorial](https://blog.logrocket.com/build-a-slackbot-in-node-js-with-slacks-bolt-api/)
 - [Slack bot for generating blogs](https://youtu.be/an_LouGafXc)
 - Brook for coming up with the idea of a slack bot connected to Open AI to help students with lab work!
+- [Canvas API](https://www.youtube.com/watch?v=cZ5cn8stjM0)

@@ -1,0 +1,81 @@
+'use strict';
+
+const axios = require('axios');
+const { WebClient } = require('@slack/web-api');
+
+const canvasToken = 'CANVAS_API_TOKEN';
+const slackToken = 'SLACK_BOT_TOKEN';
+
+// Canvas instance URL
+const canvasApiUrl = 'https://canvas.instructure.com/api/v1/courses';
+
+// 401 course ID for now
+const courseId = '6745251';
+
+const slackClient = new WebClient(slackToken);
+
+
+// Handle Slack events (copied just for this code)
+async function handleEvent(event) {
+  if (event.type === 'message' && event.text) {
+    const message = event.text;
+    
+    // Check if the message contains a request for assignment information
+    if (message.includes('assignment') || message.includes('homework')) {
+      const assignments = await getAssignments();
+      
+      // Send the assignment information back to Slack
+      const formattedAssignments = formatAssignments(assignments);
+      sendSlackMessage(event.channel, formattedAssignments);
+    }
+  }
+}
+
+
+// Fetch assignments from Canvas API
+async function getAssignments() {
+  try {
+    const response = await axios.get(`${canvasApiUrl}/${courseId}/assignments`,
+      {
+        headers: {
+          'Authorization': `Bearer ${canvasToken}`,
+        },
+      });
+    
+    return response.data;
+  } catch (err) {
+    console.error('Error fetching assignments:', err);
+    throw err;
+  }
+}
+
+// Format assignments for Slack
+function formatAssignments(assignments) {
+  // Extracted assignment details, title and due date. Can add more and format them into a message string
+  
+  let formattedMessage = 'Here are the upcoming assignments:\n';
+  
+  for (const assignment of assignments) {
+    formattedMessage += `- ${assignment.name} (Due: ${assignment.due_at})\n`;
+  }
+  
+  return formattedMessage;
+}
+
+// Send a message to Slack
+async function sendSlackMessage(channelId, message) {
+  try {
+    await slackClient.chat.postMessage({
+      channelId: channelId,
+      text: message,
+    });
+  } catch (err) {
+    console.error('Error sending Slack message:', err);
+    throw err;
+  }
+}
+
+// // Listen for Slack events
+// function startListening() {
+//   // Start listening for Slack events using the Slack Events API or your preferred approach
+// }
