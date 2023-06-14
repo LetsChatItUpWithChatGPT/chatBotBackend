@@ -14,7 +14,7 @@
     "dotenv": "^16.1.4",
     "eslint": "^8.42.0",
     "nodemon": "^2.0.22",
-    "openai": "^3.2.1"
+    "openai": "^3.3.0"
   },
   "devDependencies": {
     "serverless-offline": "^12.0.4"
