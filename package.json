@@ -4,7 +4,7 @@
   "description": "## Authors: Donna Ada, Kao Saelor, Kenya Womack, Hayden Cooper, Tricia Sawyer, Reece Renninger",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose --coverage"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +18,7 @@
     "openai": "^3.3.0"
   },
   "devDependencies": {
+    "jest": "^29.5.0",
     "serverless-offline": "^12.0.4"
   }
 }
