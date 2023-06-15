@@ -1,16 +1,19 @@
 'use strict';
 
 const { Configuration, OpenAIApi } = require('openai');
-const userConversations = new Map();
 
-const chatModule = (app) => {
+const chatModule = async (app) => {
+  const userConversations = new Map();
+  let conversationHistory = [];
+
   app.event('message', async ({ event, ack, say }) => {
 
     const channelId = event.channel;
 
-    let conversationHistory = userConversations.get(channelId) || [{ role: 'system', content: 'Provide basic response to questions without code unless requested by user.' }];
 
-    if (event.channel_type === 'im') {
+    conversationHistory = userConversations.get(channelId) || [{ role: 'system', content: 'You are an assistant that helps code school students figure out the basic steps to their lab or code challenge assignments. Please provide the problem domain or question you need help with, and I will provide you with an general answer or step-by-step guide without code or examples unless asked.' }];
+
+    if (event.channel_type === 'im' &&  !event.subtype) {
       console.log(event.text);
       console.log('event>>>>>', event);
 
@@ -19,75 +22,57 @@ const chatModule = (app) => {
       });
       const openAI = new OpenAIApi(configuration);
 
-      conversationHistory.push({ role: 'user', content: event.text });
-
-      // Modify user message to then allow the ai to respond with just the steps and not the code
-      const userMessage = event.text;
-      const modifiedUserMessage = `Steps to solve this problem domain: ${userMessage}`;
-      conversationHistory.push({ role: 'user', content: modifiedUserMessage });
+      if (!conversationHistory.includes(event.text)) {
+        conversationHistory.push({ role: 'user', content: event.text });
+      }
 
       say({
         text: ':robot_face: AI is formulating a response...',
       });
 
-      const response = await openAI.createChatCompletion({
-        model: 'gpt-3.5-turbo', 
-        temperature: 0.8,
-        messages: conversationHistory,
-      });
+      const lastRole = conversationHistory[conversationHistory.length - 1].role;
 
-      console.log('conversationHistory>>>>>', conversationHistory);
-
-      const aiResponse = response.data.choices[0].message.content;
-
-      conversationHistory.push({ role: 'assistant', content: aiResponse });
-
-      userConversations.set(channelId, conversationHistory);
-
-      console.log(response.data.choices);
-
-
-      await say({
-        text: aiResponse,
-      });
-
-
-      // if (conversationHistory.length > 0) {
-      // Check if the user's message is a follow-up question...
-      const isFollowUpQuestion = userMessage.includes('Further explanation');
-      if (isFollowUpQuestion) {
-        const followUpQuestion = userMessage.substring(userMessage.indexOf(':') + 1).trim();
-        conversationHistory.push({ role: 'user', content: followUpQuestion });
-
-
-        // Repeat the AI response generation with the follow-up question included
-        const followUpResponse = await openAI.createChatCompletion({
+      if (lastRole !== 'assistant') {
+        const response = await openAI.createChatCompletion({
           model: 'gpt-3.5-turbo',
           temperature: 0.8,
           messages: conversationHistory,
+          max_tokens: 200,
+          n: 1,
         });
 
-        const aiFollowUpResponse = followUpResponse.data.choices[0].message.content;
-        conversationHistory.push({ role: 'assistant', content: aiFollowUpResponse });
+        
 
-        // Repeat
+        console.log('response>>>>>', response.data.usage.prompt_tokens);
+
+        console.log('conversationHistory>>>>>', conversationHistory);
+
+        const aiResponse = await response.data.choices[0].message.content;
+
+        conversationHistory.push({ role: 'assistant', content: aiResponse });
+
         userConversations.set(channelId, conversationHistory);
 
-        console.log(followUpResponse.data.choices);
+        console.log('length ',response.data.choices[0].finish_reason);
         await say({
-          text: aiFollowUpResponse,
+          text: aiResponse,
         });
+
+        if (response.data.choices[0].finish_reason === 'length') {
+          say({
+            text: ':bangbang: Type `CONTINUE` to continue the conversation.',
+          });
+          return;
+        }
+        if (response.data.choices[0].finish_reason === 'stop') {
+          say({
+            text: ':robot_face: Can I help you with anything else?',
+          });
+          return;
+        }
       }
-      // }
     }
   });
 };
 
 module.exports = chatModule;
-
-/**
- * test1: added await to say function with text: aiResponse
- *        added await to say function with text: aiFollowUpResponse
- *        comment out chat history if check 
- * 
- */
