@@ -61,8 +61,7 @@ describe('Update Module', () => {
     });
 
     expect(mockAck).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith('err');
-    expect(console.error).toHaveBeenCalledWith(expect.any(Error));
-    expect(console.error.mock.calls[0][0].message).toContain('Read error');
+    expect(console.log).toHaveBeenCalledWith(expect.any(Error));
+    expect(console.error).toHaveBeenCalledWith('Read error');
   });
 });
