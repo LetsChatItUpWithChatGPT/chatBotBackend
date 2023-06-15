@@ -183,8 +183,4 @@ serverless.yml changes(while working with AWS)
 ```
 
 - Brook for coming up with the idea of a slack bot connected to Open AI to help students with lab work!
-<<<<<<< HEAD
-- [Canvas API](https://www.youtube.com/watch?v=cZ5cn8stjM0)
-=======
 - Ryan Gallaway for all the guidance and everything he has taught us so far!
->>>>>>> dev
