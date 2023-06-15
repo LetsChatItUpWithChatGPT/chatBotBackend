@@ -4,7 +4,7 @@
   "description": "## Authors: Donna Ada, Kao Saelor, Kenya Womack, Hayden Cooper, Tricia Sawyer, Reece Renninger",
   "main": "app.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --verbose --coverage"
   },
   "keywords": [],
   "author": "",
