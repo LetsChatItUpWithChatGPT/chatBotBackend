@@ -48,7 +48,3 @@ chatModule(app);
   await app.start(process.env.PORT || port);
   console.log(`⚡️ Slack Bolt app is running on port ${port}!`);
 })();
-
-
-
-
