@@ -5,7 +5,6 @@ const faqModule = (app, faqs) => {
   let raw = fs.readFileSync('./faqsDB.json');
   faqs = JSON.parse(raw);
 
-  // users can access a faqs message from db we set up
   app.command('/faqs', async ({ command, ack, say }) => {
     try {
       await ack();
@@ -49,7 +48,6 @@ const faqModule = (app, faqs) => {
     }
   });
   
-  //grabs only two items from DB with keyword purpose
   app.message(/purpose/, async ({ command, say }) => {
     try {
       let message = { blocks: [] };
