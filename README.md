@@ -38,19 +38,8 @@ _* .env.sample provided in repo. Rename file to `.env` and replace it with your 
 10. Once you have generated your chat bot and are able to get valid responses running locally such as:
 ![Alt text](assets/test-example-ofChatBot.png)
 You can begin the process of deploying!
-11. We attempted to deploy our bot through multiple avenues with Render, Heroku, and Vercel. There are multiple [hosting providers](https://api.slack.com/docs/hosting), but we ultimately ended up using [AWS(Amazon Web Services)](https://aws.amazon.com/).
-12. Ngrok was extremely helpful in testing locally before we went with the serverless route. A complete breakdown of this process can be found [here](https://slack.dev/bolt-js/deployments/aws-lambda).
-13. We recommend following the guide as it helped us tremendously with navigating the deployment, however we have some modifications:
-
-    When setting up your serverless.yml if you are using dotenv you need to add ```useDotenv: true``` like below:
-    You can also implement timeouts and memory size if you choose to.  By enabling
-    ![Alt text](assets/example-serverless-yml.png)
-
-    After running the serverless deploy command your root files will generate a serverless folder. **YOU MUST ADD THIS TO YOUR .GITIGNORE** it contains your key information for your bot and Open AI which will result in your keys being **REVOKED** if you push them to GitHub
-14. Once you have establish your bot, connected your Open AI API, and deployed to AWS, you are almost done! The final step will be setting up Lambda to auto deploy off pushs to your GitHub Repo.
-15. We followed this guide [How to set up an AWS Lambda and auto deployments with Github Actions](https://blog.jakoblind.no/aws-lambda-github-actions/). During this process you may need to modify your serverless.yml to be through secrets as well instead of env processing as referenced in the above image.
-
-***Congratulations you just completed creating a slack bot connected to Open AI API and deployed it utilizing AWS!***
+11. We attempted to deploy our bot through multiple avenues with Render, Heroku, Vercel, and AWS. There are multiple [hosting providers](https://api.slack.com/docs/hosting), choose an option that you are comfortable with.
+12. Unfortunately, all our deployment attempts resulted in a plethora of bugs that we could not resolve in our week time period for this project. We hope that you are able to get yours deployed and feel free to let us know what you did so we can update our documentation!
 
 ## # User Stories
 
@@ -126,19 +115,19 @@ You can begin the process of deploying!
 - [How to set up an AWS Lambda and auto deployments with Github Actions](https://blog.jakoblind.no/aws-lambda-github-actions/)
 - [Github Action for Serverless](https://github.com/serverless/github-action)
 
-Example of code setup for your auto deploy yml/main yml
+Example of code setup for your auto deploy if you are able to get deployment working (yml/main yml)
 
-    ```yaml
+```yaml
 
-name: Deploy to Serverless
+    name: Deploy to Serverless
 
-on:
-  push:
-    branches:
+    on:
+     push:
+      branches:
       - dev
 
-jobs:
-  deploy:
+    jobs:
+    deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -163,11 +152,11 @@ jobs:
     - name: Deploy with Serverless Framework
       run: npx serverless deploy --stage production
 
-    ```
+```
 
-serverless.yml changes
+serverless.yml changes(while working with AWS)
 
-    ```yaml
+```yaml
 
     service: <service name>
  frameworkVersion: '3'
@@ -191,6 +180,7 @@ serverless.yml changes
  plugins:
 
 - serverless-offline
-    ```
+```
 
 - Brook for coming up with the idea of a slack bot connected to Open AI to help students with lab work!
+- Ryan Gallaway for all the guidance and everything he has taught us so far!
