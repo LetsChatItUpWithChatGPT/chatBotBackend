@@ -56,7 +56,24 @@ updateModule(app, faqs);
 chatModule(app);
 
 // Handle the Lambda function event
+
+// module.exports.handler = async (event, context, callback) => {
+//   const handler = await awsLambdaReceiver.start();
+//   return handler(event, context, callback);
+// };
+
+const handler = async (event, context, callback) => {
+  const receiverHandler = await awsLambdaReceiver.start();
+  return receiverHandler(event, context, callback);
+};
+
+module.exports = {
+  app,
+  handler,
+};
+
 module.exports.handler = async (event, context, callback) => {
   const handler = await awsLambdaReceiver.start();
   return handler(event, context, callback);
 };
+
