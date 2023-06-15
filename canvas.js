@@ -2,13 +2,14 @@
 
 
 // STRETCH GOAL: this is canvas content that was added to the code from chatModule for now
-
+require('dotenv').config();
 const { Configuration, OpenAIApi } = require('openai');
 const { WebClient } = require('@slack/web-api');
 const axios = require('axios');
 
-const canvasToken = 'CANVAS_API_TOKEN';
-const slackToken = 'SLACK_BOT_TOKEN';
+// const canvasToken = 'CANVAS_API_TOKEN';
+const canvasToken = process.env.CANVAS_API_TOKEN;
+const slackToken = process.env.SLACK_BOT_TOKEN;
 
 // Canvas instance URL
 const canvasApiUrl = 'https://canvas.instructure.com/api/v1/courses';
@@ -108,5 +109,6 @@ async function sendSlackMessage(channelId, message) {
     throw err;
   }
 }
+
 
 module.exports = chatModule;
