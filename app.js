@@ -21,8 +21,6 @@ const awsLambdaReceiver = new AwsLambdaReceiver({
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   receiver: awsLambdaReceiver,
-  // socketMode: true, // enable the following to use socket mode
-  // appToken: process.env.APP_TOKEN,
 });
 
 //!! PROOF OF LIFE MESSAGE
@@ -48,7 +46,6 @@ app.message(/hey/, async ({ command, say }) => { //regex to allow any type of st
 });
 
 //** BRINGING IN MODULES */
-// const userConversations = new Map();
 //!! faq is working with modularization @ 14:26 on 6/13
 faqModule(app, faqs);
 
@@ -58,16 +55,8 @@ updateModule(app, faqs);
 //!! chat is working with modularization @ 15:41 on 6/13
 chatModule(app);
 
-
-// //start up our bot
-// (async () => {
-//   const port = 'https://chatgptbotbackend.onrender.com';
-//   // Start your app
-//   await app.start(port);
-//   console.log(`⚡️ Slack Bolt app is running on port ${port}!`);
-// })();
-
 // Handle the Lambda function event
+
 // module.exports.handler = async (event, context, callback) => {
 //   const handler = await awsLambdaReceiver.start();
 //   return handler(event, context, callback);
@@ -82,3 +71,9 @@ module.exports = {
   app,
   handler,
 };
+
+module.exports.handler = async (event, context, callback) => {
+  const handler = await awsLambdaReceiver.start();
+  return handler(event, context, callback);
+};
+

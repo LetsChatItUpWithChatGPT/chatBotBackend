@@ -1,10 +1,8 @@
 'use strict';
 const fs = require('fs');
-// get the raw data from the faqsDB.json file
 
 const faqModule = (app, faqs) => {
   let raw = fs.readFileSync('./faqsDB.json');
-  // parse the raw bytes from the file as JSON
   faqs = JSON.parse(raw);
 
   // users can access a faqs message from db we set up

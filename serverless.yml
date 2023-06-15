@@ -1,16 +1,15 @@
 service: CodeFellows-Chatbot-bolt-js
 frameworkVersion: '3'
-useDotenv: true
 provider:
   name: aws
   runtime: nodejs18.x
   timeout: 30
   memorySize: 512
   environment:
-    SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
-    SLACK_BOT_TOKEN: ${env:SLACK_BOT_TOKEN}
-    SLACK_APP_TOKEN: ${env:SLACK_APP_TOKEN}
-    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    SLACK_SIGNING_SECRET: ${{ secrets.SLACK_SIGNING_SECRET }}
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    SLACK_APP_TOKEN: ${{ secrets.SLACK_APP_TOKEN }}
+    OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 functions:
   slack:
     handler: app.handler
