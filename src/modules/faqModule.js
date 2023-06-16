@@ -93,6 +93,5 @@ const faqModule = (app, faqs) => {
     }
   });
 };
-  
+
 module.exports = faqModule;
-  
