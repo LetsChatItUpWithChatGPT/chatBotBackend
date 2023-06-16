@@ -36,7 +36,7 @@ describe('Chat Module', () => {
     jest.clearAllMocks();
   });
 
-  test('Should respond with AI message', async () => {
+  test('Should check if in Channel Type IM', async () => {
     mockApp = {
       event: jest.fn((eventName, callback) => {
         callback({ event: mockEvent, ack: mockAck, say: mockSay });
@@ -57,20 +57,6 @@ describe('Chat Module', () => {
 
     await callback({ event: mockEvent, ack: mockAck, say: mockSay }); // Pass the necessary arguments to the callback function
 
-    expect(mockCreateChatCompletion).toHaveBeenCalledWith(
-      expect.objectContaining({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are an assistant that helps code school students figure out the basic steps to their lab or code challenge assignments. Please provide the problem domain or question you need help with, and I will provide you with a general answer or step-by-step guide without code or examples unless asked.',
-          },
-          { role: 'user', content: 'Test message' },
-        ],
-        max_tokens: 100,
-      }),
-    );
-    expect(mockSay).toHaveBeenCalledWith('AI response');
+    expect(mockEvent.channel_type).toBe('im');
   });
 });

@@ -13,8 +13,8 @@ const chatModule = async (app) => {
     conversationHistory = userConversations.get(channelId) || [{ role: 'system', content: 'You are an assistant that helps code school students figure out the basic steps to their lab or code challenge assignments. Please provide the problem domain or question you need help with, and I will provide you with an general answer or step-by-step guide without code or examples unless asked.' }];
 
     if (event.channel_type === 'im' &&  !event.subtype) {
-      console.log(event.text);
-      console.log('event>>>>>', event);
+      // console.log(event.text);
+      // console.log('event>>>>>', event);
 
       const configuration = new Configuration({
         apiKey: process.env.OPENAI_API_KEY,
@@ -40,9 +40,9 @@ const chatModule = async (app) => {
           n: 1,
         });
 
-        console.log('response>>>>>', response.data.usage.prompt_tokens);
+        // console.log('response>>>>>', response.data.usage.prompt_tokens);
 
-        console.log('conversationHistory>>>>>', conversationHistory);
+        // console.log('conversationHistory>>>>>', conversationHistory);
 
         const aiResponse = await response.data.choices[0].message.content;
 
@@ -50,7 +50,7 @@ const chatModule = async (app) => {
 
         userConversations.set(channelId, conversationHistory);
 
-        console.log('length ',response.data.choices[0].finish_reason);
+        // console.log('length ',response.data.choices[0].finish_reason);
         await say({
           text: aiResponse,
         });
