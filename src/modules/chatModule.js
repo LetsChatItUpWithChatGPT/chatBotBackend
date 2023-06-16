@@ -10,7 +10,6 @@ const chatModule = async (app) => {
 
     const channelId = event.channel;
 
-
     conversationHistory = userConversations.get(channelId) || [{ role: 'system', content: 'You are an assistant that helps code school students figure out the basic steps to their lab or code challenge assignments. Please provide the problem domain or question you need help with, and I will provide you with an general answer or step-by-step guide without code or examples unless asked.' }];
 
     if (event.channel_type === 'im' &&  !event.subtype) {
@@ -40,8 +39,6 @@ const chatModule = async (app) => {
           max_tokens: 200,
           n: 1,
         });
-
-        
 
         console.log('response>>>>>', response.data.usage.prompt_tokens);
 

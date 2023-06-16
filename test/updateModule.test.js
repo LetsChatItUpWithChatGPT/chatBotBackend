@@ -33,7 +33,7 @@ describe('Update Module', () => {
     });
 
     expect(mockAck).toHaveBeenCalledTimes(1);
-    expect(mockSay).toHaveBeenCalledWith("You've added a new FAQ with the keyword *keyword.*");
+    expect(mockSay).toHaveBeenCalledWith('You\'ve added a new FAQ with the keyword *keyword.*');
 
     // Verify that the readFile and writeFile functions were called
     expect(fs.readFile).toHaveBeenCalledWith('faqsDB.json', 'utf-8');
