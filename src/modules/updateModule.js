@@ -1,8 +1,8 @@
 'use strict';
 
-const fs = require('fs');
+const fs = require('fs').promises; //modified to use promises for testing
 
-const updateModule = (app, faqs) => {
+const updateModule = (app) => {
   // allow users to update our faqs via bot
   app.command('/update', async ({ command, ack, say }) => {
     try {
@@ -14,17 +14,13 @@ const updateModule = (app, faqs) => {
         answer: data[2].trim(),
       };
 
-      // save data to db.json
-      fs.readFile('faqsDB.json', function (err, data) {
-        const json = JSON.parse(data);
-        json.data.push(newFAQ);
-        fs.writeFile('faqsDB.json', JSON.stringify(json), function (err) {
-          if (err) throw err;
-          console.log('Successfully saved to faqsDB.json!');
-        });
-      });
+      // save data to faqsDB.json
+      const faqsData = await fs.readFile('faqsDB.json', 'utf-8');
+      const faqs = JSON.parse(faqsData);
+      faqs.data.push(newFAQ);
+      await fs.writeFile('faqsDB.json', JSON.stringify(faqs));
 
-      say(`You've added a new FAQ with the keyword *${newFAQ.keyword}.*`);
+      say(`You've added a new FAQ with the keyword *${newFAQ.keyword}*.`);
     } catch (error) {
       console.log('err');
       console.error(error);
