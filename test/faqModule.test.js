@@ -25,7 +25,7 @@ describe('FAQ Module', () => {
         },
       ],
     };
-    
+
     fs.readFileSync = jest.fn().mockReturnValue(JSON.stringify(mockFaqs));
   });
 
