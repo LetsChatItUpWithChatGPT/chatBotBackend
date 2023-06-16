@@ -8,7 +8,6 @@
 
 ## # Domain Modeling
 
-This will be modified as needed through the progression of the project.  
 ![Domain Model of our SlackBot project](assets/midTermProjectUML.png)
 
 ## # Environmental Variables

@@ -28,7 +28,6 @@ app.command('/live', async ({ command, ack, say }) => {
   }
 });
 
-// testing simple message response
 app.message(/hey/, async ({ command, say }) => { 
   try {
     say('I noticed your hey, hey back.');
